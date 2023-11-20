@@ -5,6 +5,6 @@ The code will be available soon.
 
 Here is a video overview of the project:
 
-[![Video Overview](http://img.youtube.com/vi/HZxzttKK6CE/0.jpg)](http://www.youtube.com/watch?v=HZxzttKK6CE "Instance-aware Exploration-Verification-Exploitation for Instance ImageGoal Navigation")
 
+<iframe width="1380" height="655" src="https://www.youtube.com/embed/HZxzttKK6CE?autoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
