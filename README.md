@@ -42,7 +42,7 @@ python main.py
 ```
 
 ## Some tips
-- Check `agents\cur_exp.py` to see the Switch Policy
+- Check `agents\instance_exp.py` to see the Switch Policy
 - If you still have issues, feel free to open issues
 
 
