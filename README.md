@@ -1,11 +1,51 @@
-# IEVE
+# [CVPR 2024] Instance-aware Exploration-Verification-Exploitation for Instance ImageGoal Navigation
 
-This is the pytorch implementation of Instance-oriented-Exploration-Verification-Exploitation-for-ImageGoal-Navigation paper.
-The code will be available soon.
+This is the pytorch implementation of CVPR 2024 paper:  Instance-aware Exploration-Verification-Exploitation for Instance ImageGoal Navigation (IEVE).
 
-Here is a video overview of the project:
+[Project Page](https://xiaohanlei.github.io/projects/IEVE/)<br />
 
 ![example](./output.gif)
+
+### Overview:
+
+Inspired by the human behavior of “getting closer to confirm” when recognizing distant objects, we formulate the task of determining whether an object matches the one in the goal image as a sequential decision problem. In addition, we design a novel matching function that relies not
+only on the current observation and goal image but also on the Euclidean distance between the agent and the potential target. We categorize the targets into confirmed target, potential target, and no-target (exploration), and allow the agent to actively choose among these three targets.
+
+## Installing Dependencies
+- We use v0.2.3 of [habitat-sim](https://github.com/facebookresearch/habitat-sim), please follow the instructions to complete installation
+- Install habitat-lab:
+```
+cd 3rdparty\habitat-lab-0.2.3
+pip install -e habitat-lab
+```
+- Install [pytorch](https://pytorch.org/) according to your system configuration
+- cd to the root directory, install requirements
+```
+pip install -r requirements.txt
+```
+- Install [LightGlue](https://github.com/cvg/LightGlue), please follow the official guidance
+- Install [detectron2](https://github.com/facebookresearch/detectron2/) according to your system configuration
+
+### Downloading scene dataset and episode dataset
+- Follow the instructions in [habitat-lab](https://github.com/facebookresearch/habitat-lab/blob/main/DATASETS.md)
+- Move the dataset or create a symlink at `data`
+
+### Pretrained models
+- Download all the pretrained models from [google drive](https://drive.google.com/drive/folders/1C3TH9sTTHv18qmGXCOSSUDfhoOcLJsSV?usp=sharing
+) and place in pretrained models of root directory.
+
+
+## Test setup
+To test in the val set, run:
+```
+python main.py
+```
+
+## Some tips
+- Check `agents\cur_exp.py` to see the Switch Policy
+- If you still have issues, feel free to open issues
+
+
 
 ### Bibtex:
 ```
