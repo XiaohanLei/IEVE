@@ -43,7 +43,7 @@ python main.py
 
 ## Some tips
 - Check `agents\instance_exp.py` to see the Switch Policy
-- If you still have issues, feel free to open issues
+- If you have any questions, feel free to open issues
 
 
 
