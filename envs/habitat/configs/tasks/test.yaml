@@ -1,0 +1,54 @@
+# @package _global_
+
+defaults:
+  - /habitat: habitat_config_base
+  - /habitat/task: instance_imagenav_v3
+  - /habitat/simulator/agents@habitat.simulator.agents.main_agent: rgbd_agent
+  - /habitat/dataset/instance_imagenav: hm3d_v3
+  - _self_
+
+semantic_mapping:
+  frame_width: 120
+  frame_height: 160
+  hfov: 42
+  map_resolution: 5
+  map_size_cm: 2400
+  global_downscaling: 2
+  vision_range: 100
+  du_scale: 1
+  cat_pred_threshold: 5.0
+  exp_pred_threshold: 1.0
+  map_pred_threshold: 1.0
+  num_sem_categories: 7
+  camera_height: 1.31
+  num_local_steps: 40
+  collision_threshold: 0.2
+
+
+habitat:
+  environment:
+    max_episode_seconds: 1000
+  simulator:
+    action_space_config: velocitycontrol
+    agents:
+      main_agent:
+        sim_sensors:
+          rgb_sensor:
+            width: 480
+            height: 640
+            hfov: 42
+            position: [0, 1.31, 0]
+          depth_sensor:
+            width: 480
+            height: 640
+            hfov: 42
+            min_depth: 0.5
+            max_depth: 5.0
+            position: [0, 1.31, 0]
+        height: 1.41
+        radius: 0.17
+    habitat_sim_v0:
+      gpu_device_id: 0
+      allow_sliding: False
+  dataset:
+    split: train
