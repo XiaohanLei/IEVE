@@ -119,11 +119,11 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
         self.pred_box = []
         torch.set_grad_enabled(False)
 
-        self.switch_policy = Switch_policy().to(self.device)
-        state_dict = torch.load("pretrained_models/model_parameter.pkl",
-                        map_location=lambda storage, loc: storage)
-        self.switch_policy.load_state_dict({k.replace('module.', ''): v for k, v in state_dict.items()})
-        self.switch_policy.eval()
+        # self.switch_policy = Switch_policy().to(self.device)
+        # state_dict = torch.load("pretrained_models/model_parameter.pkl",
+        #                 map_location=lambda storage, loc: storage)
+        # self.switch_policy.load_state_dict({k.replace('module.', ''): v for k, v in state_dict.items()})
+        # self.switch_policy.eval()
 
         # config_file = '/instance_imagenav/Object-Goal-Navigation/3rdparty/CoDETR/projects/configs/co_dino/co_dino_5scale_swin_large_16e_o365tococo.py'
         # checkpoint_file = '/instance_imagenav/Object-Goal-Navigation/3rdparty/CoDETR/checkpoints/co_dino_5scale_swin_large_16e_o365tococo.pth'
