@@ -6,7 +6,7 @@ This is the pytorch implementation of CVPR 2024 paper:  Instance-aware Explorati
 
 ![example](./output.gif)
 
-#### The action space does not align with the paper reported (descrete waypoint control vs. velocity control), we'll fix this later.
+#### The action space does not align with the paper reported (discrete waypoint control vs. velocity control), we'll fix this later.
 
 ### Overview:
 
