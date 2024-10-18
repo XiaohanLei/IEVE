@@ -2,11 +2,11 @@
 
 This is the pytorch implementation of CVPR 2024 paper:  Instance-aware Exploration-Verification-Exploitation for Instance ImageGoal Navigation (IEVE).
 
+#### The action space does not align with the paper (discrete waypoint control vs. velocity control),  thus the results may be different from the results reported in the paper. We'll fix this later.
+
 [Project Page](https://xiaohanlei.github.io/projects/IEVE/)<br />
 
 ![example](./output.gif)
-
-#### The action space does not align with the paper reported (discrete waypoint control vs. velocity control), we'll fix this later.
 
 ### Overview:
 
