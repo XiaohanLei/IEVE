@@ -2,7 +2,7 @@
 
 This is the pytorch implementation of CVPR 2024 paper:  Instance-aware Exploration-Verification-Exploitation for Instance ImageGoal Navigation (IEVE).
 
-#### The action space does not align with the paper (discrete waypoint control vs. velocity control),  thus the results may be different from the results reported in the paper. We'll fix this later.
+#### Now the action space aligns with the paper reported (velocity control). If you have any other issues, feel free to contact us!
 
 [Project Page](https://xiaohanlei.github.io/projects/IEVE/)<br />
 
@@ -15,10 +15,9 @@ only on the current observation and goal image but also on the Euclidean distanc
 
 ## Installing Dependencies
 - We use v0.2.3 of [habitat-sim](https://github.com/facebookresearch/habitat-sim), please follow the instructions to complete installation
-- Install habitat-lab:
+- Install habitat-lab: (make sure you install our modified version of habitat-lab)
 ```
-cd 3rdparty\habitat-lab-0.2.3
-pip install -e habitat-lab
+pip install -e 3rdparty/habitat-lab
 ```
 - Install [pytorch](https://pytorch.org/) according to your system configuration
 - cd to the root directory, install requirements
