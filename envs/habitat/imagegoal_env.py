@@ -288,7 +288,6 @@ class ObjectGoal_Env(habitat.RLEnv):
         self.trajectory_states = []
        
         obs = super().reset()
-        self.info['top_down_map'] = (self.habitat_env.get_metrics())['top_down_map']
         self.update_after_reset()
         if 'semantic' in obs:
             semantic_obs = obs['semantic']
@@ -359,16 +358,10 @@ class ObjectGoal_Env(habitat.RLEnv):
         """
         
 
-        # action = action["action"]
-        # action = 1
-        if action == 0:
-        # if action['action_args']['velocity_stop'] > 0:
+        if action['action_args']['velocity_stop'] > 0:
             self.stopped = True
-            # Not sending stop to simulator, resetting manually
-            # action = 3
 
         obs, rew, done, _ = super().step(action)
-        self.info['top_down_map'] = (self.habitat_env.get_metrics())['top_down_map']
         self.transform_matrix = self.get_transformation_matrix()
     
         if 'semantic' in obs:

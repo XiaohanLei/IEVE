@@ -1,5 +1,0 @@
-# @package _global_
-
-defaults:
-  - imagenav_base
-  - /habitat/dataset/imagenav: gibson

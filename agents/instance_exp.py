@@ -19,42 +19,16 @@ from agents.utils.count import counter, MaskDINO
 from constants import color_palette
 import envs.utils.pose as pu
 import agents.utils.visualization as vu
-# from mcc_utils.sam_utils import load_model_hf, find_the_centered_box
-# import groundingdino.datasets.transforms as T
-# from groundingdino.models import build_model
-# from groundingdino.util import box_ops
-# from groundingdino.util.slconfig import SLConfig
-# from groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
-# from groundingdino.util.inference import annotate, predict
-# from segment_anything import build_sam, SamPredictor 
-from huggingface_hub import hf_hub_download
-from kornia.feature import LoFTR
 from collections import Counter
-import logging
-# import open3d as o3d
 import matplotlib.pyplot as plt
 from lightglue import LightGlue, SuperPoint, DISK
 from lightglue.utils import load_image, rbd, match_pair , numpy_image_to_torch
 import numpy.ma as ma
 import matplotlib.pyplot as plt
-import matplotlib
-# from groundingdino.util.inference import load_model, load_image, predict, annotate
-import sys
-import matplotlib.pyplot as plt
-# sys.path.append("/instance_imagenav/Object-Goal-Navigation/3rdparty/CoDETR")
-from mmdet.apis import (async_inference_detector, inference_detector,
-                        init_detector, show_result_pyplot)
 # from projects import *
-import wandb
 from skimage.draw import line_aa, line
-import asyncio
 from argparse import ArgumentParser
-# import mmcv
-# sys.path.append("/instance_imagenav/Object-Goal-Navigation/3rdparty/InternImage/detection")
-# import mmcv_custom  # noqa: F401,F403
-# import mmdet_custom  # noqa: F401,F403
 import os.path as osp
-from utils.model import Switch_policy
 
 
 
@@ -96,8 +70,6 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
         self.count_forward_actions = None
         self.instance_imagegoal = None
 
-        # self.loftr = LoFTR('indoor').to(self.device)
-
         self.extractor = DISK(max_num_keypoints=2048).eval().to(self.device)
         self.matcher = LightGlue(features='disk').eval().to(self.device)
 
@@ -118,22 +90,6 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
         self.goal_map_mask = np.ones((full_w, full_h))
         self.pred_box = []
         torch.set_grad_enabled(False)
-
-        # self.switch_policy = Switch_policy().to(self.device)
-        # state_dict = torch.load("pretrained_models/model_parameter.pkl",
-        #                 map_location=lambda storage, loc: storage)
-        # self.switch_policy.load_state_dict({k.replace('module.', ''): v for k, v in state_dict.items()})
-        # self.switch_policy.eval()
-
-        # config_file = '/instance_imagenav/Object-Goal-Navigation/3rdparty/CoDETR/projects/configs/co_dino/co_dino_5scale_swin_large_16e_o365tococo.py'
-        # checkpoint_file = '/instance_imagenav/Object-Goal-Navigation/3rdparty/CoDETR/checkpoints/co_dino_5scale_swin_large_16e_o365tococo.pth'
-        # self.codetr = init_detector(config_file, checkpoint_file, device=self.device)  
-        # 
-        #  
-        # config = '/instance_imagenav/Object-Goal-Navigation/3rdparty/InternImage/detection/configs/coco/cascade_internimage_xl_fpn_3x_coco.py'
-        # checkpoint = '/instance_imagenav/Object-Goal-Navigation/pretrained_models/cascade_internimage_xl_fpn_3x_coco.pth'
-        # self.internimg = init_detector(config, checkpoint, device=self.device)
-
 
         if args.visualize or args.print_images:
             self.legend = cv2.imread('docs/legend.png')
@@ -179,22 +135,6 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
 
         return obs, info
 
-    def get_box_with_codetr(self, image, thresh=0.1):
-        result = inference_detector(self.codetr, image)
-        re1 = []
-        re1.append(result[56])
-        re1.append(result[57])
-        re1.append(result[58])
-        re1.append(result[59])
-        re1.append(result[61])
-        re1.append(result[62])
-        final = []
-        for i in range(6):
-            for j in range(re1[i].shape[0]):
-                if re1[i][j, 4] > thresh:
-                    final.append([i, re1[i][j, 4], re1[i][j, :4]])
-        return final
-
     def local_feature_match_lightglue(self, re_key2=False):
         with torch.set_grad_enabled(False):
             ob = numpy_image_to_torch(self.raw_obs[:, :, :3]).to(self.device)
@@ -220,57 +160,6 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
                     # print(f'{self.rank}  {self.timestep}  h')
                     return np.zeros((1, 2))
                 
-    def local_feature_match_gluestick(self, re_key2=False):
-        with torch.set_grad_enabled(False):
-            ob = cv2.cvtColor(self.raw_obs[:, :, :3], cv2.COLOR_RGB2GRAY)
-            gi = cv2.cvtColor(self.instance_imagegoal, cv2.COLOR_RGB2GRAY)
-            torch_gray0 = numpy_image_to_torch(ob).to(self.device)[None]
-            torch_gray1 = numpy_image_to_torch(gi).to(self.device)[None]
-            try:
-                x = {'image0': torch_gray0, 'image1': torch_gray1}
-                pred = self.pipeline_gluestick(x)
-                pred = batch_to_np(pred)
-                kp0, kp1 = pred["keypoints0"], pred["keypoints1"]
-                m0 = pred["matches0"]
-
-                line_seg0, line_seg1 = pred["lines0"], pred["lines1"]
-                line_matches = pred["line_matches0"]
-
-                valid_matches = m0 != -1
-                match_indices = m0[valid_matches]
-                matched_kps0 = kp0[valid_matches]
-                matched_kps1 = kp1[match_indices]
-
-                valid_matches = line_matches != -1
-                match_indices = line_matches[valid_matches]
-                matched_lines0 = line_seg0[valid_matches]
-                matched_lines1 = line_seg1[match_indices]
-
-                if re_key2:
-                    return (match_indices, matched_kps0)
-                else:
-                    return matched_kps0 
-            except:
-                if re_key2:
-                    return (np.zeros((1, 2)), np.zeros((1, 2)))
-                else:
-                    return np.zeros((1, 2))
-
-
-    def local_feature_match(self):
-        # with torch.set_grad_enabled(False):
-        ob = numpy_image_to_torch(self.raw_obs).to(self.device)
-        gi = numpy_image_to_torch(self.instance_imagegoal).to(self.device)
-        input1 = transforms.functional.rgb_to_grayscale(ob)
-        input2 = transforms.functional.rgb_to_grayscale(gi)
-        inputs = {
-            "image0": input1.unsqueeze(0),
-            "image1": input2.unsqueeze(0)
-        }
-        out = self.loftr(inputs)
-        points0 = out['keypoints0'].cpu()
-        # torch.set_grad_enabled(True)
-        return points0.numpy()
 
     def get_mask_center(self, image_mask):
         '''
@@ -638,49 +527,6 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
                 
             return planner_inputs
 
-
-    def instance_discriminator_no_switch(self, planner_inputs, id_lo_whwh_speci):
-        start_x, start_y, start_o, gx1, gx2, gy1, gy2 = \
-            planner_inputs['pose_pred']
-        map_pred = np.rint(planner_inputs['map_pred'])
-        gx1, gx2, gy1, gy2 = int(gx1), int(gx2), int(gy1), int(gy2)
-        planning_window = [gx1, gx2, gy1, gy2]
-
-        r, c = start_y, start_x
-        start = [int(r * 100.0 / self.args.map_resolution - gx1),
-                 int(c * 100.0 / self.args.map_resolution - gy1)]
-        start = pu.threshold_poses(start, map_pred.shape)
-
-        goal_mask = self.obs[4+self.gt_goal_idx, :, :]
-        if self.global_goal is not None:
-            planner_inputs['found_goal'] = 1
-            goal_map = pu.threshold_pose_map(self.global_goal, gx1, gx2, gy1, gy2)
-            planner_inputs['goal'] = goal_map
-        elif planner_inputs['found_goal'] == 1:
-
-            # preprocess foundation model output
-            # this order is not correct, we should follow the order of from near to further
-            # id_lo_whwh_speci = sorted(id_lo_whwh_speci, key=lambda s: s[1], reverse=True)
-            id_lo_whwh_speci = sorted(id_lo_whwh_speci, 
-                key=lambda s: (s[2][2]-s[2][0])**2+(s[2][3]-s[2][1])**2, reverse=True)
-            whwh = (id_lo_whwh_speci[0][2] / 4).astype(int)
-            w, h = whwh[2]-whwh[0], whwh[3]-whwh[1]
-            goal_mask = np.zeros_like(goal_mask)
-            goal_mask[whwh[1]:whwh[3], whwh[0]:whwh[2]] = 1.
-
-            planner_inputs['found_goal'] = 1
-            global_goal = np.zeros((self.full_w, self.full_h))
-            goal_map = self.compute_ins_goal_map(whwh, start, start_o)
-
-            global_goal[gx1:gx2, gy1:gy2] = goal_map
-            self.global_goal = global_goal
-            planner_inputs['goal'] = goal_map
-
-        else:
-            planner_inputs['found_goal'] = 0
-            planner_inputs['goal'] = planner_inputs['exp_goal']
-
-
     def instance_discriminator(self, planner_inputs, id_lo_whwh_speci):
         # Get pose prediction and global policy planning window
         start_x, start_y, start_o, gx1, gx2, gy1, gy2 = \
@@ -897,31 +743,19 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
             if 'sem_map_pred_3d' in planner_inputs:
                 self._render_3d(planner_inputs)
 
+        if action['action_args']['velocity_stop'] >= 0:
 
-        if action >= 0:
-        # if action['action_args']['velocity_stop'] >= 0:
-
-            # act
-            action = {'action': action}
             obs, rew, done, info = super().step(action)
             self.raw_obs = obs[:3, :, :].transpose(1, 2, 0)
             self.raw_depth = obs[3:4, :, :]
 
-            # points = self.local_feature_match_lightglue().shape[0]
-            # seg_mask = self._get_sem_pred(self.raw_obs.astype(np.uint8), use_seg=True)
-            # mask = np.where(seg_mask[:, :, self.gt_goal_idx] > 0, self.raw_depth[0, :, :], 0)
-            # self._visualize_mask(mask, points, self.sign)
-
             # preprocess obs
             obs = self._preprocess_obs(obs) 
-            self.last_action = action['action']
-            # self.last_action = (action['action_args']['linear_velocity'] > 0)
+            self.last_action = (action['action_args']['linear_velocity'] > 0)
             self.obs = obs
             self.info = info
 
             info['g_reward'] += rew
-
-            
 
             return obs, rew, done, info
 
@@ -1033,16 +867,15 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
         # modify the code with velocity control
         # Deterministic Local Policy
         if stop and planner_inputs['found_goal'] == 1:
-            action = 0  # Stop
-            # action = {
-            #     "action": ("velocity_control", "velocity_stop"),
-            #     "action_args": {
-            #         "angular_velocity": np.array([0]),
-            #         "linear_velocity": np.array([0]),
-            #         "camera_pitch_velocity": np.array([0]),
-            #         "velocity_stop": np.array([1]),
-            #     },
-            # }
+            action = {
+                "action": ("velocity_control", "velocity_stop"),
+                "action_args": {
+                    "angular_velocity": np.array([0]),
+                    "linear_velocity": np.array([0]),
+                    "camera_pitch_velocity": np.array([0]),
+                    "velocity_stop": np.array([1]),
+                },
+            }
         else:
             (stg_x, stg_y) = stg
             angle_st_goal = math.degrees(math.atan2(stg_x - start[0],
@@ -1057,51 +890,42 @@ class Instance_Exp_Env_Agent(ObjectGoal_Env):
 
             # if relative_angle > self.args.turn_angle / 2.:
             if relative_angle > 15.:
-                action = 3  # Right
-                # ang_vel = np.array([abs(relative_angle) / 60.])
-                # ang_vel = np.clip(ang_vel, 0., 1.)
-                # action = {
-                #     "action": ("velocity_control", "velocity_stop"),
-                #     "action_args": {
-                #         "angular_velocity": -ang_vel,
-                #         "linear_velocity": np.array([-1]),
-                #         "camera_pitch_velocity": np.array([0]),
-                #         "velocity_stop": np.array([0]),
-                #     },
-                # }
+                ang_vel = np.array([abs(relative_angle) / 60.])
+                ang_vel = np.clip(ang_vel, 0., 1.)
+                action = {
+                    "action": ("velocity_control", "velocity_stop"),
+                    "action_args": {
+                        "angular_velocity": -ang_vel,
+                        "linear_velocity": np.array([-1]),
+                        "camera_pitch_velocity": np.array([0]),
+                        "velocity_stop": np.array([0]),
+                    },
+                }
             # elif relative_angle < -self.args.turn_angle / 2.:
             elif relative_angle < -15.:
-                action = 2  # Left
-                # ang_vel = np.array([abs(relative_angle) / 60.])
-                # ang_vel = np.clip(ang_vel, 0., 1.)
-                # action = {
-                #     "action": ("velocity_control", "velocity_stop"),
-                #     "action_args": {
-                #         "angular_velocity": ang_vel,
-                #         "linear_velocity": np.array([-1]),
-                #         "camera_pitch_velocity": np.array([0]),
-                #         "velocity_stop": np.array([0]),
-                #     },
-                # }
+                ang_vel = np.array([abs(relative_angle) / 60.])
+                ang_vel = np.clip(ang_vel, 0., 1.)
+                action = {
+                    "action": ("velocity_control", "velocity_stop"),
+                    "action_args": {
+                        "angular_velocity": ang_vel,
+                        "linear_velocity": np.array([-1]),
+                        "camera_pitch_velocity": np.array([0]),
+                        "velocity_stop": np.array([0]),
+                    },
+                }
             else:
-                action = 1  # Forward
-                # lin_vel = np.array([pu.get_l2_distance(stg_x, start[0], stg_y, start[1]) * 5 / 35.])
-                # lin_vel = np.clip(lin_vel, 0., 1.)
-                # action = {
-                #     "action": ("velocity_control", "velocity_stop"),
-                #     "action_args": {
-                #         "angular_velocity": np.array([0]),
-                #         "linear_velocity": lin_vel,
-                #         "camera_pitch_velocity": np.array([0]),
-                #         "velocity_stop": np.array([0]),
-                #     },
-                # }
-
-                # if lin_vel < 1:
-                #     print(f"{self.rank}  {self.timestep}  lin_vel:  {lin_vel}")
-            
-        # if self.been_stuck:
-        #     print(f"Rank: {self.rank}, timestep: {self.timestep},  {action} !")
+                lin_vel = np.array([pu.get_l2_distance(stg_x, start[0], stg_y, start[1]) * 5 / 35.])
+                lin_vel = np.clip(lin_vel, 0., 1.)
+                action = {
+                    "action": ("velocity_control", "velocity_stop"),
+                    "action_args": {
+                        "angular_velocity": np.array([0]),
+                        "linear_velocity": lin_vel,
+                        "camera_pitch_velocity": np.array([0]),
+                        "velocity_stop": np.array([0]),
+                    },
+                }
 
         return action
 
