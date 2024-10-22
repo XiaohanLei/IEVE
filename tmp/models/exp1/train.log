@@ -1,0 +1,23 @@
+INFO:root:Namespace(agent='sem_exp', alpha=0.99, auto_gpu_config=1, big_enough_f=0.16666666666666666, big_enough_thresh=4, camera_height=0.88, cat_pred_threshold=5.0, clip_param=0.2, collision_threshold=0.2, cuda=True, du_scale=1, dump_location='./tmp/', entropy_coef=0.001, env_frame_height=640, env_frame_width=480, eps=1e-05, eval=1, exp_name='exp1', exp_pred_threshold=1.0, floor_thr=50, frame_height=160, frame_width=120, gamma=0.99, global_downscaling=3, global_hidden_size=256, hfov=79, intrinsic_rew_coeff=0.02, kernel_size=91, load='pretrained_models/sem_exp.pth', log_interval=10, low_dense=8, lr=2.5e-05, map_pred_threshold=1.0, map_resolution=5, map_size_cm=3600, max_d=100.0, max_depth=30.0, max_episode_length=1000, max_grad_norm=0.5, min_d=1.5, min_depth=0.0, no_cuda=False, num_eval_episodes=125, num_global_steps=20, num_local_steps=10, num_mini_batch=5, num_processes=10, num_processes_on_first_gpu=1, num_processes_per_gpu=3, num_sem_categories=16, num_train_episodes=10000, num_training_frames=10000000, ppo_epoch=4, print_images=0, reward_coeff=0.1, save_interval=1, save_periodic=50000, seed=1, sem_gpu_id=-1, sem_pred_prob_thr=0.5, sim_gpu_id=1, split='val', succeed_match_points=200, success_dist=1.0, task_config='tasks/instance_imagenav.yaml', tau=0.95, total_num_scenes=36, turn_angle=30, use_gae=False, use_recurrent_global=0, value_loss_coef=0.5, version='v3', vision_range=100, visualize=0)
+INFO:root:Namespace(agent='sem_exp', alpha=0.99, auto_gpu_config=1, big_enough_f=0.16666666666666666, big_enough_thresh=4, camera_height=0.88, cat_pred_threshold=5.0, clip_param=0.2, collision_threshold=0.2, cuda=True, du_scale=1, dump_location='./tmp/', entropy_coef=0.001, env_frame_height=640, env_frame_width=480, eps=1e-05, eval=1, exp_name='exp1', exp_pred_threshold=1.0, floor_thr=50, frame_height=160, frame_width=120, gamma=0.99, global_downscaling=3, global_hidden_size=256, hfov=79, intrinsic_rew_coeff=0.02, kernel_size=91, load='pretrained_models/sem_exp.pth', log_interval=10, low_dense=8, lr=2.5e-05, map_pred_threshold=1.0, map_resolution=5, map_size_cm=3600, max_d=100.0, max_depth=30.0, max_episode_length=1000, max_grad_norm=0.5, min_d=1.5, min_depth=0.0, no_cuda=False, num_eval_episodes=125, num_global_steps=20, num_local_steps=10, num_mini_batch=5, num_processes=10, num_processes_on_first_gpu=1, num_processes_per_gpu=3, num_sem_categories=16, num_train_episodes=10000, num_training_frames=10000000, ppo_epoch=4, print_images=0, reward_coeff=0.1, save_interval=1, save_periodic=50000, seed=1, sem_gpu_id=-1, sem_pred_prob_thr=0.5, sim_gpu_id=1, split='val', succeed_match_points=200, success_dist=1.0, task_config='tasks/instance_imagenav.yaml', tau=0.95, total_num_scenes=36, turn_angle=30, use_gae=False, use_recurrent_global=0, value_loss_coef=0.5, version='v3', vision_range=100, visualize=0)
+INFO:root:Time: 00d 00h 00m 00s, num timesteps 0, FPS 0,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 06s, num timesteps 100, FPS 15,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 11s, num timesteps 200, FPS 17,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 17s, num timesteps 300, FPS 17,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 21s, num timesteps 400, FPS 18,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 27s, num timesteps 500, FPS 18,
+	Rewards:
+	Losses:
+INFO:root:Time: 00d 00h 00m 32s, num timesteps 600, FPS 18,
+	Rewards: InstanceImageNav succ/spl/dtg: 1.00000/0.75061/0.02890(1),
+	Losses:
