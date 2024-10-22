@@ -14,7 +14,7 @@ Inspired by the human behavior of “getting closer to confirm” when recognizi
 only on the current observation and goal image but also on the Euclidean distance between the agent and the potential target. We categorize the targets into confirmed target, potential target, and no-target (exploration), and allow the agent to actively choose among these three targets.
 
 ## Installing Dependencies
-- We use v0.2.3 of [habitat-sim](https://github.com/facebookresearch/habitat-sim), please follow the instructions to complete installation
+- We use challenge-2023-branch of [habitat-sim](https://github.com/facebookresearch/habitat-sim), please follow the instructions to complete installation
 - Install habitat-lab: (make sure you install our modified version of habitat-lab)
 ```
 pip install -e 3rdparty/habitat-lab
